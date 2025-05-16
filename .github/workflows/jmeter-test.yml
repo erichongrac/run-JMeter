@@ -28,17 +28,24 @@ jobs:
           echo "JMETER_HOME=$(pwd)/apache-jmeter-5.5" >> $GITHUB_ENV
           echo "$(pwd)/apache-jmeter-5.5/bin" >> $GITHUB_PATH
 
-      - name: Validate JMeter Test Plan
+      - name: Run JMeter Test Plan (CSV Output)
         run: |
-          jmeter -n -t jmeter/demo-test.jmx -j jmeter/validate.log
+          jmeter -n -t jmeter/demo-test.jmx \
+            -l jmeter/results.csv \
+            -Jjmeter.save.saveservice.output_format=csv
 
-      - name: Run JMeter Test Plan
-        run: |
-          jmeter -n -t jmeter/demo-test.jmx -l jmeter/results.jtl
-
-      - name: Upload JMeter Test Results
+      - name: Upload JMeter CSV Results
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
-          path: jmeter/results.jtl
+          path: jmeter/results.csv
 
+      - name: Fail if any samples failed
+        run: |
+          FAILURES=$(grep ',false,' jmeter/results.csv | wc -l)
+          if [ "$FAILURES" -gt 0 ]; then
+            echo "❌ Found $FAILURES failed requests."
+            exit 1
+          else
+            echo "✅ All requests succeeded."
+          fi
