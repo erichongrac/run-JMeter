@@ -21,9 +21,10 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Download Apache JMeter
+      - name: Download and Extract Apache JMeter
         run: |
-          curl -sL https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.5.tgz | tar xz
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
+          tar -xzf apache-jmeter-5.5.tgz
           echo "JMETER_HOME=$(pwd)/apache-jmeter-5.5" >> $GITHUB_ENV
           echo "$(pwd)/apache-jmeter-5.5/bin" >> $GITHUB_PATH
 
