@@ -28,6 +28,10 @@ jobs:
           echo "JMETER_HOME=$(pwd)/apache-jmeter-5.5" >> $GITHUB_ENV
           echo "$(pwd)/apache-jmeter-5.5/bin" >> $GITHUB_PATH
 
+      - name: Validate JMeter Test Plan
+        run: |
+          jmeter -n -t jmeter/demo-test.jmx -j jmeter/validate.log
+
       - name: Run JMeter Test Plan
         run: |
           jmeter -n -t jmeter/demo-test.jmx -l jmeter/results.jtl
@@ -37,3 +41,4 @@ jobs:
         with:
           name: jmeter-results
           path: jmeter/results.jtl
+
