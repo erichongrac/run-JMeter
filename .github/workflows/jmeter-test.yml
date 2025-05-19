@@ -12,9 +12,9 @@ on:
         required: true
         default: 'example.com'
       output_format:
-        description: 'Output format (csv, xml, or html)'
+        description: 'Output format (html, csv, or xml)'
         required: true
-        default: 'csv'
+        default: 'html'
 
 jobs:
   jmeter-test:
