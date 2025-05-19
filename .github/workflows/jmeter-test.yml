@@ -6,6 +6,15 @@ on:
       - 'jmeter/**'
       - '.github/workflows/jmeter-test.yml'
   workflow_dispatch:
+    inputs:
+      domain:
+        description: 'Target domain (e.g., example.com)'
+        required: true
+        default: 'example.com'
+      output_format:
+        description: 'Output format (csv or xml)'
+        required: true
+        default: 'csv'
 
 jobs:
   jmeter-test:
@@ -28,19 +37,26 @@ jobs:
           echo "JMETER_HOME=$(pwd)/apache-jmeter-5.5" >> $GITHUB_ENV
           echo "$(pwd)/apache-jmeter-5.5/bin" >> $GITHUB_PATH
 
-      - name: Run JMeter Test Plan (CSV Output)
+      - name: Replace Domain in JMX File
         run: |
-          jmeter -n -t jmeter/demo-test.jmx \
-            -l jmeter/results.csv \
-            -Jjmeter.save.saveservice.output_format=csv
+          sed "s/<stringProp name=\"HTTPSampler.domain\">.*<\/stringProp>/<stringProp name=\"HTTPSampler.domain\">${{ github.event.inputs.domain }}<\/stringProp>/" \
+            jmeter/demo-test.jmx > jmeter/updated-test.jmx
 
-      - name: Upload JMeter CSV Results
+      - name: Run JMeter Test Plan
+        run: |
+          OUTPUT_FILE=jmeter/results.${{ github.event.inputs.output_format }}
+          jmeter -n -t jmeter/updated-test.jmx \
+            -l "$OUTPUT_FILE" \
+            -Jjmeter.save.saveservice.output_format=${{ github.event.inputs.output_format }}
+
+      - name: Upload JMeter Results
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
-          path: jmeter/results.csv
+          path: jmeter/results.${{ github.event.inputs.output_format }}
 
-      - name: Fail if any samples failed
+      - name: Fail if any samples failed (CSV only)
+        if: ${{ github.event.inputs.output_format == 'csv' }}
         run: |
           FAILURES=$(grep ',false,' jmeter/results.csv | wc -l)
           if [ "$FAILURES" -gt 0 ]; then
