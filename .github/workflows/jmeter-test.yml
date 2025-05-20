@@ -38,8 +38,10 @@ jobs:
           echo "$(pwd)/apache-jmeter-5.5/bin" >> $GITHUB_PATH
 
       - name: Replace Domain in JMX File
+        env:
+          TARGET_DOMAIN: ${{ github.event.inputs.domain }}
         run: |
-          sed "s|<stringProp name=\"HTTPSampler.domain\">.*</stringProp>|<stringProp name=\"HTTPSampler.domain\">${{ github.event.inputs.domain }}</stringProp>|" \
+          sed "s|<stringProp name=\"HTTPSampler.domain\">.*</stringProp>|<stringProp name=\"HTTPSampler.domain\">${TARGET_DOMAIN}</stringProp>|" \
             jmeter/demo-test.jmx > jmeter/updated-test.jmx
 
       - name: Run JMeter and Generate Results
