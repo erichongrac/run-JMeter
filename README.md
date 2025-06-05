@@ -2,7 +2,7 @@
 
 This GitHub Actions workflow runs Apache JMeter load tests against Sitecore environments and generates performance reports.
 
-## 🔧 Environments
+## Environments
 
 - **UAT**  
   - URL: `ractest-com-au`  
@@ -12,21 +12,21 @@ This GitHub Actions workflow runs Apache JMeter load tests against Sitecore envi
   - URL: `sitecore-prd-cd.azurewebsites.net`  
   - Runner: `digital-prd-windows-latest`
 
-## 🚀 Features
+## Features
 
 - Installs Apache JMeter in the workflow runner
 - Runs load tests against the selected environment
 - Generates results in both CSV and HTML formats
 - Uploads the test results as workflow artifacts
 
-## 📂 Output Files
+## Output Files
 
 - `results.csv` – Raw JMeter result data
 - `HTML/index.html` – Full HTML report with metrics and graphs
 
-## ▶️ How to Use
+## How to Use
 
-1. Trigger the workflow manually or via push/merge to a branch.
-2. Select the appropriate environment (UAT or PRD) if using manual dispatch.
+1. Trigger the workflow manually
+2. Select the appropriate branch and environment (UAT or PRD).
 3. Wait for the workflow to complete.
 4. Download the artifacts from the GitHub Actions run.
